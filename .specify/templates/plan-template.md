@@ -39,8 +39,20 @@
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+*Any failing gate requires a justified entry in the Complexity Tracking table.*
 
-[Gates determined based on constitution file]
+| # | Principle Gate | Status | Notes |
+|---|----------------|--------|-------|
+| I | Structured Data Is the System of Record — No geometry parsing; all inputs are typed parametric records; Blender import discards mesh data at the boundary | PASS / FAIL / N/A | |
+| II | All Outputs Must Be Deterministic — Engine functions are pure; no hidden state, randomness, or timestamps in output generation | PASS / FAIL / N/A | |
+| III | Manufacturing Constraints Are First-Class Validation — Validation runs before generation; invalid inputs rejected with specific errors; no silent bad output | PASS / FAIL / N/A | |
+| IV | Construction Methods Drive Dimension Resolution — Each method has its own resolver; no universal formula; changing method produces different dimensions | PASS / FAIL / N/A | |
+| V | Every Part Is Fully Traceable — All parts carry deterministic identifiers encoding project+unit+role; no anonymous parts in any output | PASS / FAIL / N/A | |
+| VI | Generated Outputs Are Immutable and Versioned — No in-place mutation of generated parts; parameter changes produce new snapshots; exports include version/hash | PASS / FAIL / N/A | |
+| VII | Dual-Input Parity — UI-defined and Blender-imported units share identical schema, validators, resolvers, and generation logic; parity tests exist | PASS / FAIL / N/A | |
+
+**Pre-Phase-0 Gate Result**: [ ] All gates PASS or justified in Complexity Tracking
+**Post-Phase-1 Re-check Result**: [ ] All gates PASS or justified in Complexity Tracking
 
 ## Project Structure
 
