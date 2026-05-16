@@ -130,8 +130,14 @@ drawer_width_bot_slide  = W − (4 × T) − 0.6        # 6mm slide clearance to
 
 ## 6. Corner Unit Exception
 
-**Decision**: A corner unit is identified by a boolean flag `is_corner` on the unit definition. When `is_corner=True` and unit type is `lower`, the engine MUST NOT generate stretchers and MUST NOT enforce the stretcher validation rule.
+**Decision**: A corner unit is identified by a boolean flag `is_corner` on the unit definition. The flag is valid for all unit types (`lower`, `mid-upper`, `high-upper`) — corner cabinets exist across the full range of kitchen unit categories.
 
-**Rationale**: Corner units have non-standard internal structures (carousel or fixed shelf arrangements) that preclude standard stretchers. This is an explicit exception to the lower-unit stretcher rule (Constitution Principle IV, v1.1.0).
+Effect per type:
+- **lower + is_corner=True**: engine MUST NOT generate stretchers and MUST NOT enforce the stretcher validation rule
+- **mid-upper / high-upper + is_corner=True**: carcass generation is identical to non-corner in Phase 1; the distinction matters in Phase 2 when door widths are calculated — standard `(W − N×4) / N` formula does not apply; door widths must be explicitly specified via `face_width_L` and `face_width_R` fields on the unit definition
 
-**Alternatives considered**: A separate `corner_lower` unit type — rejected as over-engineering. The boolean flag on an existing `lower` type is simpler and keeps the type vocabulary to three values.
+**Door width fields**: `face_width_L` and `face_width_R` are added to `UnitDefinition` as `float | None`. In Phase 1 they are recorded on the model but not used (door generation is Phase 2). In Phase 2, the validator will enforce that these are non-None whenever `is_corner=True`.
+
+**Rationale**: Corner units have two independent door faces at 90°. The bounding width W is the diagonal extent, so neither face's opening width can be derived from W alone. Each face must be explicitly specified. This is a domain rule from skills/cabinet-specs/SKILL.md ("Corner cabinet door widths must be explicitly specified per face").
+
+**Alternatives considered**: A separate `corner_lower`, `corner_upper` type — rejected as over-engineering. The boolean flag on any existing type is simpler and keeps the type vocabulary to three values. Face widths are optional fields on the shared UnitDefinition, active only when is_corner=True.

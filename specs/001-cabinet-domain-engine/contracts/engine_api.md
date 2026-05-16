@@ -161,6 +161,8 @@ unit = UnitDefinition(
     shelf_count=1,
     drawers=[DrawerConfig(position=1, slide_type=DrawerSlideType.side_slides)],
     is_corner=False,
+    face_width_L=None,  # only required for corner units in Phase 2+
+    face_width_R=None,
 )
 
 room = RoomContext(existing_unit_ids=["CAB-001", "CAB-002"])

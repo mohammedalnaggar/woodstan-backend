@@ -84,12 +84,16 @@ Immutable input to the engine alongside WorkshopProfile and RoomContext.
 | `depth` | float (cm) | Outer depth of the unit |
 | `shelf_count` | int ≥ 0 | Number of adjustable shelves |
 | `drawers` | list[`DrawerConfig`] | Drawer configurations; must be empty for mid/high-upper |
-| `is_corner` | bool | `True` for corner lower units — disables stretchers |
+| `is_corner` | bool | `True` for corner units of any type — two faces at 90°; disables stretchers on lower units |
+| `face_width_L` | float \| None (cm) | Explicit left-face door width for corner units; required when `is_corner=True` (Phase 2); None in Phase 1 |
+| `face_width_R` | float \| None (cm) | Explicit right-face door width for corner units; required when `is_corner=True` (Phase 2); None in Phase 1 |
 
 **Constraints (validated before generation)**:
 - `width`, `height`, `depth` > 0 (cm)
 - `drawers` must be empty if `unit_type != lower`
-- `is_corner` only meaningful when `unit_type == lower`
+- `is_corner` is valid for all unit types (`lower`, `mid-upper`, `high-upper`)
+- For corner lower units: stretchers are not generated
+- For corner upper units: carcass generation is identical to non-corner in Phase 1; door width handling (face_width_L/R) is enforced in Phase 2
 
 ---
 

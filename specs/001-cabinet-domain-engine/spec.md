@@ -81,6 +81,7 @@ Before any parts are returned, the engine runs a full manufacturability validati
 
 - What happens when a lower unit is defined with zero shelves and no drawers? (Valid — open lower unit; engine must generate sides, bottom, back, and two stretchers only.)
 - What happens when a lower unit is a corner unit? (Corner units are exempt from the stretcher rule — no stretchers generated; this must be asserted in a dedicated test.)
+- What happens when a mid-upper or high-upper unit is a corner unit? (Valid — corner flag applies to all unit types. Carcass generation is the same as a non-corner upper unit in Phase 1. Door widths must be explicitly specified via face_width_L and face_width_R rather than derived from total width; this is enforced in Phase 2 when door generation is introduced.)
 - What happens when the Workshop Profile changes between two calls? (Engine is stateless — it reads the profile passed in at call time; no cached state from prior calls.)
 - What happens when unit width is exactly the minimum allowable? (Must be accepted as valid — boundary value must not be rejected.)
 - What happens when the same unit definition is processed concurrently by multiple callers? (Pure stateless functions — identical results regardless of concurrency.)
