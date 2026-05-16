@@ -2,17 +2,15 @@
 SYNC IMPACT REPORT
 ==================
 Generated: 2026-05-16
-Constitution Version: 1.0.0
+Constitution Version: 1.1.0
 
-Version change: N/A (initial fill) → 1.0.0 (MAJOR — initial ratification)
-Principles added: All 7 (initial ratification)
-Principles removed: None
-Sections added: Core Principles, Technology Stack and Integration Constraints,
-  Development Workflow, Governance
+Version change: 1.0.0 → 1.1.0 (MINOR — assembly method model, Workshop Profile, dimension standard)
+Principles changed: Principle IV rewritten (5 joinery methods → 2 assembly methods + lower-unit stretcher rule)
+Principles added: None
+Sections added to Technology Stack: Dimension Standard, Workshop Profile, Unit Type Vocabulary
 Templates requiring updates:
-  - .specify/templates/plan-template.md ✅ Constitution Check section updated
-  - .specify/templates/spec-template.md ✅ No changes needed
-  - .specify/templates/tasks-template.md ✅ No changes needed
+  - .specify/templates/plan-template.md — review for dimension standard references
+  - specs/001-cabinet-domain-engine/spec.md — updated as part of this amendment
 Deferred TODOs: None
 Skills reference docs (not modified):
   - skills/cabinet-specs/SKILL.md — workshop construction standards (reference only)
@@ -55,16 +53,23 @@ specific, actionable error messages at definition time. The system MUST NOT
 silently generate outputs for invalid inputs or defer validation to a
 downstream step. Validation MUST occur before any part generation engine runs.
 
-### IV. Construction Methods Drive Dimension Resolution
+### IV. Assembly Method Drives Dimension Resolution
 
-Every supported construction method — butt joint with confirmat screws, dowel
-(32mm system), domino/loose tenon, rabbet/dado, and blind dado — MUST have its
-own dedicated dimension resolver that accounts for the method's exact material
-overlap, joinery depth, clearance, and component relationship rules. The system
-MUST NOT use a single universal dimension formula across all methods. Changing
-a unit's construction method MUST produce demonstrably different finished part
-dimensions. Adding a new construction method MUST require implementing a new
-resolver, not modifying shared calculation logic.
+Two assembly methods are supported: `full_sides` (side panels cover the full
+height of the unit, sitting outside the top and bottom panels) and
+`full_top_bottom` (top and bottom panels cover the full width, sitting outside
+the side panels). Each method MUST have its own dedicated dimension resolver.
+The system MUST NOT use a single universal dimension formula across both methods.
+Changing the assembly method on the Workshop Profile MUST produce demonstrably
+different finished part dimensions for all units that inherit from that profile.
+Adding a new assembly method MUST require implementing a new resolver, not
+modifying shared calculation logic.
+
+**Lower unit structural rule:** All lower units (type `lower`) MUST include two
+horizontal stretchers — a front stretcher (no back-panel groove) and a back
+stretcher (with back-panel groove) — in place of a top panel. The sole exception
+is corner units, which MUST NOT include stretchers. This rule is enforced by the
+manufacturability validator, not left to the caller.
 
 ### V. Every Part Is Fully Traceable to Its Origin
 
@@ -100,6 +105,26 @@ units. Parity MUST be verified by automated tests.
 ---
 
 ## Technology Stack and Integration Constraints
+
+**Dimension Standard**: All cabinet dimensions (width, height, depth) MUST be
+expressed in centimetres (cm) throughout the platform — in schemas, API
+contracts, export files, and UI displays. No dimension value in any unit
+definition may be expressed in millimetres. Material thickness values
+(carcass panel, back panel, edge banding) are stored in cm in the Workshop
+Profile and MUST be used from that profile in all calculations; no millimetre
+constants may appear in engine code.
+
+**Workshop Profile**: Every workshop installation MUST define a single
+WorkshopProfile record containing: `assembly_method` (`full_sides` or
+`full_top_bottom`), `carcass_thickness` (cm), `back_panel_thickness` (cm),
+and `edge_banding_thickness` (cm). All engine functions that compute panel
+dimensions or edge banding MUST receive the Workshop Profile as an explicit
+parameter — they MUST NOT hardcode any material or assembly constant.
+
+**Unit Type Vocabulary**: The three permitted unit types are `lower`,
+`mid-upper`, and `high-upper`. No other type identifiers are valid. Drawers
+are permitted only in `lower` units. `mid-upper` and `high-upper` units
+support doors only.
 
 **Backend**: Python 3.11+ / FastAPI. Domain engine logic MUST be implemented
 as pure Python functions with no framework dependencies, enabling independent
@@ -195,8 +220,9 @@ the deviation is necessary and why a compliant alternative was insufficient.
 
 **Version History**:
 
-| Version | Date       | Change Summary                     |
-|---------|------------|------------------------------------|
-| 1.0.0   | 2026-05-16 | Initial ratification, 7 principles |
+| Version | Date       | Change Summary                                                                                  |
+|---------|------------|-------------------------------------------------------------------------------------------------|
+| 1.0.0   | 2026-05-16 | Initial ratification, 7 principles                                                              |
+| 1.1.0   | 2026-05-16 | Principle IV revised: 5 joinery methods → 2 assembly methods (full_sides / full_top_bottom). Added Workshop Profile, dimension standard (cm), unit type vocabulary, and lower-unit stretcher rule to Technology Stack constraints. |
 
-**Version**: 1.0.0 | **Ratified**: 2026-05-16 | **Last Amended**: 2026-05-16
+**Version**: 1.1.0 | **Ratified**: 2026-05-16 | **Last Amended**: 2026-05-16
